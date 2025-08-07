@@ -47,6 +47,7 @@
 /* USER CODE BEGIN PV */
 CAN_CONTEXT can_context;
 TUNABLE_PARAMETERS params;
+int debug = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -121,7 +122,15 @@ int main(void)
   HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
   sendParameterTune_dummy(&can_context);
+
   /* USER CODE END 2 */
+
+  if (parametersTuned == 4) {
+	  saveParametersToFlash(&params);
+	  debug = 1;
+  }
+
+//  loadParametersFromFlash(&params);
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */

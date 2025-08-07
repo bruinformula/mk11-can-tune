@@ -29,7 +29,7 @@ void parameterTuneRxHandler(CAN_CONTEXT* c, TUNABLE_PARAMETERS* params);
 void parameterSetData(CAN_CONTEXT* c, TUNABLE_PARAMETERS* params);
 
 void saveParametersToFlash(TUNABLE_PARAMETERS* data);
-void loadParameterFromFlash(TUNABLE_PARAMETERS* data);
+void loadParametersFromFlash(TUNABLE_PARAMETERS* data);
 void clearParametersFromFlash();
 
 

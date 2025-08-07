@@ -46,6 +46,7 @@
 
 /* USER CODE BEGIN PV */
 CAN_CONTEXT can_context;
+TUNABLE_PARAMETERS params;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,6 +60,13 @@ void SystemClock_Config(void);
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &(can_context.RxHeader), can_context.RxData) != HAL_OK) {
 		return;
+	}
+
+	if (can_context.RxHeader.StdId == PARAMETER_TUNE_ID &&
+		can_context.RxData[0] == MICROCONTROLLER_ID) {
+		parameterTuneRxHandler(&can_context, &params);
+	} else {
+		// TODO
 	}
 }
 /* USER CODE END 0 */
@@ -112,7 +120,7 @@ int main(void)
   HAL_CAN_Start(&hcan1);
   HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
-  sendParameterTuneRequest_dummy(&can_context);
+  sendParameterTune_dummy(&can_context);
   /* USER CODE END 2 */
 
   /* Infinite loop */

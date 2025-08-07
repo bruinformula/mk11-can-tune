@@ -1,4 +1,7 @@
-../Core/Src/tuning.c:12:6:sendParameterTuneRequest_dummy	16	static
-../Core/Src/tuning.c:24:6:saveParametersToFlash	48	static
-../Core/Src/tuning.c:47:6:loadParametersFromFlash	16	static
-../Core/Src/tuning.c:51:6:clearParameterFlash	32	static
+../Core/Src/tuning.c:12:7:bytes_to_float	24	static
+../Core/Src/tuning.c:20:6:sendParameterTune_dummy	16	static
+../Core/Src/tuning.c:52:6:parameterTuneRxHandler	16	static
+../Core/Src/tuning.c:65:6:parameterSetData	16	static
+../Core/Src/tuning.c:83:6:saveParametersToFlash	48	static
+../Core/Src/tuning.c:106:6:loadParametersFromFlash	16	static
+../Core/Src/tuning.c:110:6:clearParameterFlash	32	static

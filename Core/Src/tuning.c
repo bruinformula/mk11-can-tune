@@ -16,44 +16,46 @@ float bytes_to_float(uint8_t b0, uint8_t b1, uint8_t b2, uint8_t b3) {
 	return f;
 }
 
-int parametersTuned = 0;
-void sendParameterTune_dummy(CAN_CONTEXT* c) {
-	  c->TxHeader.IDE = CAN_ID_STD;
-	  c->TxHeader.StdId = PARAMETER_TUNE_ID;
-	  c->TxHeader.RTR = CAN_RTR_DATA;
-	  c->TxHeader.DLC = 7;
+void sendACK(CAN_CONTEXT* c) {
+	c->TxHeader.IDE = CAN_ID_STD;
+	c->TxHeader.StdId = PARAMETER_TUNE_ID;
+	c->TxHeader.RTR = CAN_RTR_DATA;
+	c->TxHeader.DLC = 2;
 
-	  c->TxData[0] = MICROCONTROLLER_ID;
-	  c->TxData[1] = PARAMETER_TUNE_DATA;
+	c->TxData[0] = MICROCONTROLLER_ID;
+	c->TxData[1] = PARAMETER_TUNE_ACCEPT;
 
-	  // Some Random Values
-	  c->TxData[3] = 0x42;
-	  c->TxData[4] = 0x87;
-	  c->TxData[5] = 0xCC;
-	  c->TxData[6] = 0xCD;
-
-	  c->TxData[2] = MIN_TORQUE_ID;
-	  HAL_CAN_AddTxMessage(&hcan1, &(c->TxHeader), c->TxData, &(c->TxMailbox));
-	  HAL_Delay(1000);
-
-	  c->TxData[2] = MAX_TORQUE_ID;
-	  HAL_CAN_AddTxMessage(&hcan1, &(c->TxHeader), c->TxData, &(c->TxMailbox));
-	  HAL_Delay(1000);
-
-	  c->TxData[2] = REGEN_BASELINE_TORQUE_ID;
-	  HAL_CAN_AddTxMessage(&hcan1, &(c->TxHeader), c->TxData, &(c->TxMailbox));
-	  HAL_Delay(1000);
-
-	  c->TxData[2] = REGEN_MAX_TORQUE_ID;
-	  HAL_CAN_AddTxMessage(&hcan1, &(c->TxHeader), c->TxData, &(c->TxMailbox));
-	  HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan1, &(c->TxHeader), c->TxData, &(c->TxMailbox));
 }
 
+void sendNACK(CAN_CONTEXT* c) {
+	c->TxHeader.IDE = CAN_ID_STD;
+	c->TxHeader.StdId = PARAMETER_TUNE_ID;
+	c->TxHeader.RTR = CAN_RTR_DATA;
+	c->TxHeader.DLC = 2;
+
+	c->TxData[0] = MICROCONTROLLER_ID;
+	c->TxData[1] = PARAMETER_TUNE_REJECT;
+
+	HAL_CAN_AddTxMessage(&hcan1, &(c->TxHeader), c->TxData, &(c->TxMailbox));
+}
+
+bool isUpdateSafe() {
+	// TODO: Logic for when tunes are safe to perform needs to be ROBUST and likely varies from microcontroller to microcontroller
+	return 1;
+}
+
+int parametersTuned = 0;
 void parameterTuneRxHandler(CAN_CONTEXT* c, TUNABLE_PARAMETERS* params) {
-	// TODO
 	switch (c->RxData[1]) {
 	case PARAMETER_TUNE_REQUEST:
-		// TODO
+		if (isUpdateSafe()) {
+			// Send ACK to the GUI
+			sendACK(c);
+		} else {
+			// Send NACK to the GUI
+			sendNACK(c);
+		}
 		break;
 	case PARAMETER_TUNE_DATA:
 		parameterSetData(c, params);

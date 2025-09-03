@@ -24,7 +24,9 @@ typedef struct {
 } TUNABLE_PARAMETERS;
 
 extern int parametersTuned;
-void sendParameterTune_dummy(CAN_CONTEXT* c);
+bool isUpdateSafe();
+void sendACK(CAN_CONTEXT* c);
+void sendNACK(CAN_CONTEXT* c);
 void parameterTuneRxHandler(CAN_CONTEXT* c, TUNABLE_PARAMETERS* params);
 void parameterSetData(CAN_CONTEXT* c, TUNABLE_PARAMETERS* params);
 

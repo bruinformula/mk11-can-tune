@@ -20,11 +20,10 @@
 #include "main.h"
 #include "can.h"
 #include "gpio.h"
-#include "tuning.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "tuning.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,12 +58,14 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+	debug++;
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &(can_context.RxHeader), can_context.RxData) != HAL_OK) {
 		return;
 	}
 
 	if (can_context.RxHeader.StdId == PARAMETER_TUNE_ID &&
 		can_context.RxData[0] == MICROCONTROLLER_ID) {
+		// Asserts correct StdID + Microcontroller ID
 		parameterTuneRxHandler(&can_context, &params);
 	} else {
 		// TODO
@@ -121,16 +122,7 @@ int main(void)
   HAL_CAN_Start(&hcan1);
   HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
-  sendParameterTune_dummy(&can_context);
-
   /* USER CODE END 2 */
-
-  if (parametersTuned == 4) {
-	  saveParametersToFlash(&params);
-	  debug = 1;
-  }
-
-//  loadParametersFromFlash(&params);
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
